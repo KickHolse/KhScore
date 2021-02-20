@@ -1,74 +1,94 @@
-# Skript feito por Kiberzn
-# Discord: https://discord.gg/94KgEdfUHv
+# ─────────────────────────────────────────────────── #
+#                    ██ ▄█▀  ██████                   #
+#                    ██▄█▒ ▒██    ▒                   #
+#                   ▓███▄░ ░ ▓██▄                     #
+#                   ▓██ █▄   ▒   ██▒                  #
+#                   ▒██▒ █▄▒██████▒▒                  #
+#                   ▒ ▒▒ ▓▒▒ ▒▓▒ ▒ ░                  #
+#                   ░ ░▒ ▒░░ ░▒  ░ ░                  #
+#                   ░ ░░ ░ ░  ░  ░                    #
+#                   ░  ░         ░                    #
+# ─────────────────────────────────────────────────── #
+options:
+#	Nome: KhScore | Autor: Kiberzn
+	version: 1.1
 
-scoreboard:
-  update-time: 1
-  titles:
-  - '&a&lREDE ZN'
-  - '&6&lR&a&lEDE ZN'
-  - '&f&lR&6&lE&a&lDE ZN'
-  - '&f&lRE&6&lD&a&lE ZN'
-  - '&f&lRED&6&lE &a&lZN'
-  - '&f&lREDE &6&lZ&a&lN'
-  - '&f&lREDE Z&6&lN'
-  - '&f&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&f&lREDE ZN'
-  - '&f&lREDE ZN'
-  - '&f&lREDE ZN'
-  - '&f&lREDE ZN'
-  - '&f&lREDE ZN'
-  - '&f&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&f&lREDE ZN'
-  - '&f&lREDE ZN'
-  - '&f&lREDE ZN'
-  - '&f&lREDE ZN'
-  - '&f&lREDE ZN'
-  - '&f&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  - '&a&lREDE ZN'
-  lines:
-  - ''
-  - ' User: &a{khcore_colored}'
-  - ' Rank: {khcore_group}'
-  - ''
-  - ' Online: &a{on}'
-  - ''
-  - ' &ewww.redezn.com'
+# ──────────────────────────────────────────────────────────────────────────────────────────────────────────────── #
+# events
+join:
+	khcore_notifyUpdate(player, "KhScore", "khscore", "76051", "{@version}", "khscore atualizar")
+	khscore_scoreboard(player)
+
+# ──────────────────────────────────────────────────────────────────────────────────────────────────────────────── #
+# command
+command /khscore [<text = help>] [<text>] [<text>] [<text>]:
+	permission: khscore.*
+	permission message: §3[KhScore] §7v{@version} §f- §7Criado por §6Kiberzn§7.
+	trigger:
+		arg 1 == "help":
+			send "%nl%  &eAjuda - KhScore &71/1%nl% "
+			send "&3 /khscore atualizar &f- &7Atualiza o skript%nl%"
+		arg 1 == "atualizar":
+			khcore_update(player, "%{khscore::check_update}%", "KhScore", script)
+
+# ──────────────────────────────────────────────────────────────────────────────────────────────────────────────── #
+# file manager
+function khscore_filemanager(use: text):
+	{_use} == "value":
+		set {_temp::*} to yaml list "scoreboard.lines" from file "plugins/KhScore/language.yml"
+		set {khscoreline} to 0
+		set {_empty} to 0
+		delete {khscore.line::*}
+		set {_line} to amount of {_temp::*}
+		loop {_temp::*}:
+			add 1 to {khscoreline}
+			"%loop-value%" == "":
+				set {khscore.line::%{_line}%} to "§%{_empty}%"
+				{_empty} < 9:
+					add 1 to {_empty}
+			else:
+				set {khscore.line::%{_line}%} to colored loop-value
+			remove 1 from {_line}
+	{_use} == "create":
+		khcore_downGithub("KhScore/language.yml", "https://raw.githubusercontent.com/KickHolse/KhScore/main/files/language")
+		khscore_filemanager("value")
+		
+# ──────────────────────────────────────────────────────────────────────────────────────────────────────────────── #
+# functions and sub
+function khscore_scoreboard(p: player):
+	delete stylish scoreboard "KHSCORE-%{_p}%"
+	create new stylish scoreboard named "KHSCORE-%{_p}%"
+	set {_line} to 1
+	loop {khscoreline} times:
+		create a new id based score "KHSCORE-%{_p}%Slot%{_line}%" with text "&%{_line}%" slot {_line} for stylish scoreboard "KHSCORE-%{_p}%"
+		add 1 to {_line}
+	khscore_scroller({_p})
+	while {_p} is online:
+		set stylish scoreboard of {_p} to "KHSCORE-%{_p}%"
+		set {_line} to 1
+		loop {khscoreline} times:
+			set the text of id "KHSCORE-%{_p}%Slot%{_line}%" to khcore_getText({_p}, "%{khscore.line::%{_line}%}%")
+			add 1 to {_line}
+		wait 1 seconds
+function khscore_scroller(p: player):
+	{antitick} == true:
+		while {_p} is online:
+			loop yaml list "scoreboard.titles" from file "plugins/KhScore/language.yml":
+				set title of stylish scoreboard "KHSCORE-%{_p}%" to khcore_getText({_p}, colored "%loop-value%")
+				set {_x} to yaml value "scoreboard.update-time" from file "plugins/KhScore/language.yml"
+				wait "%{_x}% ticks" parsed as timespan
+
+# ──────────────────────────────────────────────────────────────────────────────────────────────────────────────── #
+# load
+unload:
+	delete {antitick}
+load:
+	khscore_filemanager("create")
+	set {antitick} to true
+	wait 1 second
+	text from "https://api.spigotmc.org/legacy/update.php?resource=76051" != "{@version}":
+		set {khscore::check_update} to "true"
+		send "&3[KHSCORE] &cYou are not using the latest version of skript" to console
+	else:
+		send "&3[KHSCORE] &aYou are using the latest version of skript" to console
+	send "&3[KHSCORE] &aKhScore &8v{@version} &aenabled!" to console
